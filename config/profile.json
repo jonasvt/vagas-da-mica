@@ -1,0 +1,52 @@
+{
+  "_comment": "Seu perfil. Edite à vontade e rode `python -m vagas rescore` para recalcular as notas. Padrões são expressões regulares (sem diferenciar maiúsculas).",
+
+  "targets": [
+    {"label": "Editor de vídeo", "pattern": "video edit|\\beditors?\\b|\\bediting\\b|\\bedit\\b", "weight": 15},
+    {"label": "YouTube", "pattern": "youtube|\\byt\\b|youtuber", "weight": 12},
+    {"label": "Long-form", "pattern": "long[- ]?form|long videos?|full[- ]length|\\b(8|10|12|15|20)\\s?(-|–|to)\\s?\\d{2}\\s?min", "weight": 8},
+    {"label": "Shorts/Reels/TikTok", "pattern": "\\bshorts?\\b|\\breels?\\b|tik ?tok|short[- ]?form|vertical video", "weight": 8},
+    {"label": "Gaming", "pattern": "gaming|gameplay|minecraft|roblox|fortnite|\\bgta\\b|streamer|twitch", "weight": 8},
+    {"label": "Podcast", "pattern": "podcast", "weight": 6},
+    {"label": "Reaproveitamento de conteúdo", "pattern": "repurpos|clipping|clipper|\\bclips\\b|highlights", "weight": 6},
+    {"label": "Motion graphics", "pattern": "motion graphics?|motion design|after effects", "weight": 6},
+    {"label": "Criador de conteúdo", "pattern": "content creator|creators?\\b|channel|subscribers|\\bsubs\\b", "weight": 5},
+    {"label": "Recorrente / longo prazo", "pattern": "long[- ]term|ongoing|recurring|retainer|consistent work|per week|weekly|monthly", "weight": 6}
+  ],
+  "target_cap": 50,
+  "editing_title": "edit|motion|animat|clip|post[- ]?produc|reels?|shorts?|tik ?tok|video (creator|producer)|videograph|vfx",
+
+  "excluded": [
+    {"label": "sem pagamento", "pattern": "\\bunpaid\\b|for exposure|\\bvolunteer\\b|no budget", "weight": 40},
+    {"label": "só thumbnail (não é edição)", "pattern": "^(?!.*edit).*thumbnail (designer|artist)", "weight": 30},
+    {"label": "não é edição (roteiro, dev, vendas…)", "pattern": "^(?!.*(edit|video|motion)).*(script ?writer|developer|engineer|sales|accountant|seo specialist)", "weight": 30}
+  ],
+
+  "my_software": ["Premiere Pro", "After Effects", "DaVinci Resolve", "CapCut", "Photoshop"],
+
+  "min_comp_usd": {
+    "video": 100,
+    "short": 20,
+    "minute": 10,
+    "hour": 15,
+    "week": 250,
+    "month": 1000,
+    "year": 15000,
+    "project": 100
+  },
+  "good_pay_multiplier": 1.5,
+
+  "approx_usd_rates": {"EUR": 1.08, "GBP": 1.27, "CAD": 0.72, "AUD": 0.65, "BRL": 0.18, "INR": 0.012},
+
+  "video_keywords": "video|editor|editing|youtube|motion|reels|tiktok|shorts|podcast|premiere|after effects|davinci|clipper|clipping|animator|post[- ]production|content creator",
+
+  "notify": {
+    "min_score": 60,
+    "only_live": true,
+    "digest_every_hours": 12,
+    "digest_min_score": 40,
+    "discord_webhook_url_env": "VAGAS_DISCORD_WEBHOOK",
+    "telegram_bot_token_env": "VAGAS_TELEGRAM_TOKEN",
+    "telegram_chat_id_env": "VAGAS_TELEGRAM_CHAT_ID"
+  }
+}

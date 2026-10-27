@@ -1,0 +1,27 @@
+{
+  "_comment": "Fontes do site da Mica. As palavras de busca e os bilhetes ficam em site/mica.json. interval_min evita consultar a mesma fonte à toa (o robô roda a cada 2 h).",
+  "dias_guardar": 30,
+  "_termos_extras": "Além das palavras da Mica (site/mica.json), o robô procura estes termos no Himalayas — assim a aba Buscar acha vagas dessas áreas também.",
+  "termos_extras": ["community manager", "social media manager", "content manager", "content creator", "video editor"],
+  "fontes": [
+    {"id": "himalayas", "name": "Himalayas", "method": "himalayas_api", "modo": "termos", "interval_min": 360,
+     "default_remote": true, "enabled": true, "params": {"pages": 2, "country": "BR"}},
+    {"id": "github-br", "name": "Vagas BR no GitHub", "method": "github_issues", "modo": "feed", "interval_min": 60,
+     "default_remote": false, "pais": "BR", "enabled": true,
+     "params": {"repos": ["backend-br/vagas", "datascience-br/vagas", "frontendbr/vagas", "qa-brasil/vagas"], "per_page": 50}},
+    {"id": "remotive", "name": "Remotive", "method": "remotive_api", "modo": "feed", "interval_min": 360,
+     "default_remote": true, "enabled": true, "params": {"search": "", "limit": 500}},
+    {"id": "remoteok", "name": "Remote OK", "method": "remoteok_api", "modo": "feed", "interval_min": 180,
+     "default_remote": true, "enabled": true, "params": {}},
+    {"id": "jobicy", "name": "Jobicy", "method": "jobicy_api", "modo": "feed", "interval_min": 240,
+     "default_remote": true, "enabled": true, "params": {"requests": [{"count": 100}]}},
+    {"id": "workingnomads", "name": "Working Nomads", "method": "workingnomads_api", "modo": "feed", "interval_min": 240,
+     "default_remote": true, "enabled": true, "params": {}},
+    {"id": "wwr", "name": "We Work Remotely", "method": "wwr_rss", "modo": "feed", "interval_min": 240,
+     "default_remote": true, "enabled": true, "params": {"feeds": ["https://weworkremotely.com/remote-jobs.rss"]}},
+    {"id": "gupy", "name": "Gupy", "method": "gupy_api", "modo": "termos", "interval_min": 240,
+     "default_remote": false, "pais": "BR", "enabled": false,
+     "_aviso": "Desligada: os termos da Gupy vedam 'agregar, copiar ou duplicar partes' da plataforma. Ligar é decisão sua.",
+     "params": {"limit": 50}}
+  ]
+}

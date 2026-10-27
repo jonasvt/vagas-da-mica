@@ -1,0 +1,126 @@
+{
+  "_comment": "Fontes coletadas automaticamente. 'enabled' aqui só vale na primeira vez; depois, ligue/desligue pelo painel. interval_min respeita os limites de cada fonte.",
+  "sources": [
+    {
+      "id": "reddit-editors",
+      "name": "Reddit — subs de contratação de editores",
+      "type": "community",
+      "method": "reddit_rss",
+      "url": "https://www.reddit.com/r/HireAnEditor+VideoEditingRequests+VideoEditor_forhire+VideoEditors_forhire+YouTubeEditorsForHire+CreatorServices+FindVideoEditors/new/",
+      "enabled": true,
+      "interval_min": 10,
+      "relevance_gate": "editor_community",
+      "default_remote": true,
+      "base_legit": 0.7,
+      "params": {
+        "subreddits": ["HireAnEditor", "VideoEditingRequests", "VideoEditor_forhire", "VideoEditors_forhire", "YouTubeEditorsForHire", "CreatorServices", "FindVideoEditors"],
+        "limit": 100
+      }
+    },
+    {
+      "id": "reddit-general",
+      "name": "Reddit — subs gerais de freelance",
+      "type": "community",
+      "method": "reddit_rss",
+      "url": "https://www.reddit.com/r/forhire+freelance_forhire+jobbit/new/",
+      "enabled": true,
+      "interval_min": 20,
+      "relevance_gate": "video_keywords",
+      "default_remote": true,
+      "base_legit": 0.65,
+      "params": {"subreddits": ["forhire", "freelance_forhire", "jobbit"], "limit": 100}
+    },
+    {
+      "id": "himalayas",
+      "name": "Himalayas",
+      "type": "job_board",
+      "method": "himalayas_api",
+      "url": "https://himalayas.app/jobs/video-editor",
+      "enabled": true,
+      "interval_min": 360,
+      "relevance_gate": "video_keywords",
+      "gate_fields": ["title", "tags"],
+      "default_remote": true,
+      "base_legit": 0.85,
+      "params": {"queries": ["video editor", "motion designer", "youtube"], "pages": 2}
+    },
+    {
+      "id": "remoteok",
+      "name": "Remote OK",
+      "type": "job_board",
+      "method": "remoteok_api",
+      "url": "https://remoteok.com/remote-video-jobs",
+      "enabled": true,
+      "interval_min": 180,
+      "relevance_gate": "video_keywords",
+      "default_remote": true,
+      "base_legit": 0.8,
+      "params": {}
+    },
+    {
+      "id": "remotive",
+      "name": "Remotive",
+      "type": "job_board",
+      "method": "remotive_api",
+      "url": "https://remotive.com/remote-jobs",
+      "enabled": true,
+      "interval_min": 360,
+      "relevance_gate": "video_keywords",
+      "default_remote": true,
+      "base_legit": 0.85,
+      "params": {"search": "video", "limit": 100}
+    },
+    {
+      "id": "jobicy",
+      "name": "Jobicy",
+      "type": "job_board",
+      "method": "jobicy_api",
+      "url": "https://jobicy.com/jobs-rss-feed",
+      "enabled": true,
+      "interval_min": 240,
+      "relevance_gate": "video_keywords",
+      "default_remote": true,
+      "base_legit": 0.85,
+      "params": {"requests": [{"tag": "video editor"}, {"industry": "design-multimedia"}]}
+    },
+    {
+      "id": "workingnomads",
+      "name": "Working Nomads",
+      "type": "job_board",
+      "method": "workingnomads_api",
+      "url": "https://www.workingnomads.com/jobs",
+      "enabled": true,
+      "interval_min": 240,
+      "relevance_gate": "video_keywords",
+      "default_remote": true,
+      "base_legit": 0.85,
+      "params": {}
+    },
+    {
+      "id": "freelancer",
+      "name": "Freelancer.com",
+      "type": "freelance_marketplace",
+      "method": "freelancer_api",
+      "url": "https://www.freelancer.com/jobs/video-editing",
+      "enabled": true,
+      "interval_min": 30,
+      "relevance_gate": "video_keywords",
+      "default_remote": true,
+      "base_legit": 0.75,
+      "params": {"queries": ["youtube video editing", "video editor", "shorts reels editing"], "limit": 50}
+    },
+    {
+      "id": "wwr",
+      "name": "We Work Remotely",
+      "type": "job_board",
+      "method": "wwr_rss",
+      "url": "https://weworkremotely.com/categories/remote-design-jobs",
+      "enabled": true,
+      "interval_min": 240,
+      "relevance_gate": "video_keywords",
+      "default_remote": true,
+      "base_legit": 0.85,
+      "params": {"feeds": ["https://weworkremotely.com/categories/remote-design-jobs.rss", "https://weworkremotely.com/categories/all-other-remote-jobs.rss"]}
+    }
+  ]
+}

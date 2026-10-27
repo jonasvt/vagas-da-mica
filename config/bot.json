@@ -1,0 +1,137 @@
+{
+  "_comment": "Configuração do bot do Discord. Só entram vagas REMOTAS que aceitam quem está no Brasil: presenciais, híbridas e remotas explicitamente restritas a outros países (ex.: 'US only', 'Europe') são descartadas.",
+
+  "dias_na_busca": 15,
+  "max_vagas_por_mensagem": 10,
+
+  "fontes": [
+    {
+      "id": "reddit-editors",
+      "name": "Reddit (editores de vídeo)",
+      "method": "reddit_rss",
+      "modo": "feed",
+      "interval_min": 10,
+      "default_remote": true,
+      "classificar_posts": true,
+      "enabled": true,
+      "params": {"subreddits": ["HireAnEditor", "VideoEditingRequests", "VideoEditor_forhire", "VideoEditors_forhire", "YouTubeEditorsForHire", "CreatorServices", "FindVideoEditors"], "limit": 100}
+    },
+    {
+      "id": "reddit-geral",
+      "name": "Reddit (contratação em geral)",
+      "method": "reddit_rss",
+      "modo": "feed",
+      "interval_min": 20,
+      "default_remote": false,
+      "classificar_posts": true,
+      "so_contratacao": true,
+      "enabled": true,
+      "params": {"subreddits": ["forhire", "freelance_forhire", "hiring", "jobbit"], "limit": 100}
+    },
+    {
+      "id": "github-br",
+      "name": "Vagas BR no GitHub",
+      "method": "github_issues",
+      "modo": "feed",
+      "interval_min": 30,
+      "default_remote": false,
+      "pais": "BR",
+      "enabled": true,
+      "params": {"repos": ["backend-br/vagas", "frontendbr/vagas", "datascience-br/vagas", "qa-brasil/vagas"], "per_page": 50}
+    },
+    {
+      "id": "email-alertas",
+      "name": "Alertas por e-mail (LinkedIn e Upwork)",
+      "method": "email_alertas",
+      "modo": "feed",
+      "interval_min": 15,
+      "default_remote": false,
+      "enabled": true,
+      "requer_env": ["IMAP_USER", "IMAP_PASSWORD"],
+      "_aviso": "Só lê a sua caixa de entrada (somente leitura). Fica parada até você preencher IMAP_USER e IMAP_PASSWORD no .env.",
+      "params": {"remetentes": ["linkedin.com", "upwork.com"], "dias": 3}
+    },
+    {
+      "id": "gupy",
+      "name": "Gupy",
+      "method": "gupy_api",
+      "modo": "termos",
+      "interval_min": 120,
+      "default_remote": false,
+      "pais": "BR",
+      "enabled": false,
+      "_aviso": "Desligada: os termos da Gupy vedam 'agregar, copiar ou duplicar partes' da plataforma. Ligar é decisão sua.",
+      "params": {"limit": 50}
+    },
+    {
+      "id": "himalayas",
+      "name": "Himalayas",
+      "method": "himalayas_api",
+      "modo": "termos",
+      "interval_min": 360,
+      "default_remote": true,
+      "enabled": true,
+      "params": {"pages": 2, "country": "BR"}
+    },
+    {
+      "id": "remotive",
+      "name": "Remotive",
+      "method": "remotive_api",
+      "modo": "feed",
+      "interval_min": 360,
+      "default_remote": true,
+      "enabled": true,
+      "params": {"search": "", "limit": 500}
+    },
+    {
+      "id": "remoteok",
+      "name": "Remote OK",
+      "method": "remoteok_api",
+      "modo": "feed",
+      "interval_min": 180,
+      "default_remote": true,
+      "enabled": true,
+      "params": {}
+    },
+    {
+      "id": "jobicy",
+      "name": "Jobicy",
+      "method": "jobicy_api",
+      "modo": "feed",
+      "interval_min": 240,
+      "default_remote": true,
+      "enabled": true,
+      "params": {"requests": [{"count": 100}]}
+    },
+    {
+      "id": "workingnomads",
+      "name": "Working Nomads",
+      "method": "workingnomads_api",
+      "modo": "feed",
+      "interval_min": 240,
+      "default_remote": true,
+      "enabled": true,
+      "params": {}
+    },
+    {
+      "id": "wwr",
+      "name": "We Work Remotely",
+      "method": "wwr_rss",
+      "modo": "feed",
+      "interval_min": 240,
+      "default_remote": true,
+      "enabled": true,
+      "params": {"feeds": ["https://weworkremotely.com/remote-jobs.rss"]}
+    },
+    {
+      "id": "freelancer",
+      "name": "Freelancer.com",
+      "method": "freelancer_api",
+      "modo": "termos",
+      "interval_min": 60,
+      "default_remote": true,
+      "enabled": true,
+      "params": {"limit": 30}
+    }
+  ]
+}

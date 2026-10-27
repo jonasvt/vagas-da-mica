@@ -1,0 +1,16 @@
+# dados pessoais e segredos
+data/
+.env
+
+# fica só no PC (o repositório é público): anotações de pesquisa e config do Claude
+docs/
+.claude/
+*.db
+*.db-wal
+*.db-shm
+
+__pycache__/
+*.pyc
+
+# gerado pelo robô a cada execução (publicado só no site)
+site/vagas.json

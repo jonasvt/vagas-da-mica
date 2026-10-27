@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Localizador de Vagas</title>
+<style>
+:root{--bg:#f6f6f4;--panel:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e3e2dd;--accent:#1f7a4d;--accent-ink:#fff;--warn:#a15c00;--bad:#b3261e;--chip:#efeee9;--new:#0b63c5}
+@media (prefers-color-scheme:dark){:root{--bg:#141413;--panel:#1d1d1b;--ink:#ecebe6;--muted:#9d9c95;--line:#2f2e2b;--accent:#3fb37a;--accent-ink:#08130d;--warn:#e0a24a;--bad:#ef7a72;--chip:#2a2926;--new:#5aa8ff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+h1{font-size:16px;margin:0 12px 0 0}
+.kpis{display:flex;gap:6px;flex-wrap:wrap}
+.kpi{background:var(--chip);border-radius:6px;padding:3px 8px;font-size:12px;color:var(--muted)}
+.kpi b{color:var(--ink);font-variant-numeric:tabular-nums}
+.spacer{flex:1}
+button,select,input,textarea{font:inherit;color:inherit}
+button{background:var(--chip);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+nav{display:flex;gap:2px;flex-wrap:wrap;padding:8px 16px 0;border-bottom:1px solid var(--line);background:var(--panel)}
+nav button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;padding:8px 10px;color:var(--muted)}
+nav button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.filters{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+.filters input,.filters select{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+.filters input[type=search]{min-width:200px}
+.filters label{display:flex;gap:4px;align-items:center;color:var(--muted);font-size:13px}
+main{padding:12px 16px 60px;max-width:1200px}
+.empty{color:var(--muted);padding:30px 0}
+.job{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:grid;grid-template-columns:44px 1fr auto;gap:10px;cursor:pointer}
+.job:hover{border-color:var(--muted)}
+.job.sel{outline:2px solid var(--accent)}
+.score{width:40px;height:40px;border-radius:8px;display:grid;place-items:center;font-weight:700;font-variant-numeric:tabular-nums;background:var(--chip)}
+.score.hi{background:var(--accent);color:var(--accent-ink)}
+.score.mid{border:2px solid var(--accent)}
+.title{font-weight:600;font-size:15px}
+.meta{color:var(--muted);font-size:12.5px;margin-top:2px;display:flex;flex-wrap:wrap;gap:4px 10px}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.tag{background:var(--chip);border-radius:4px;padding:1px 6px;font-size:12px}
+.tag.new{background:var(--new);color:#fff}
+.tag.warn{color:var(--warn);border:1px solid var(--warn);background:none}
+.tag.bad{color:var(--bad);border:1px solid var(--bad);background:none}
+.tag.ok{color:var(--accent);border:1px solid var(--accent);background:none}
+.comp{font-weight:700;font-variant-numeric:tabular-nums}
+.actions{display:flex;flex-direction:column;gap:4px;align-items:stretch}
+.actions a,.actions button{font-size:12.5px;text-align:center}
+a{color:var(--accent)}
+a.btn{display:inline-block;background:var(--accent);color:var(--accent-ink);border-radius:6px;padding:5px 10px;text-decoration:none}
+#detail{position:fixed;top:0;right:0;width:min(620px,100vw);height:100vh;overflow:auto;background:var(--panel);border-left:1px solid var(--line);padding:16px 18px 40px;box-shadow:-8px 0 30px rgba(0,0,0,.15);display:none;z-index:10}
+#detail.open{display:block}
+#detail h2{font-size:18px;margin:6px 0 4px}
+#detail .desc{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px;max-height:420px;overflow:auto;font-size:13.5px}
+#detail table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13px}
+#detail td{border-bottom:1px solid var(--line);padding:4px 6px;vertical-align:top}
+#detail td:first-child{color:var(--muted);width:150px}
+#detail textarea{width:100%;min-height:70px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px}
+.reasons{margin:4px 0;padding-left:18px;font-size:13px}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0}
+table.grid{border-collapse:collapse;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px;font-size:13px}
+table.grid th,table.grid td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.grid th{color:var(--muted);font-weight:600}
+.bar{height:10px;background:var(--accent);border-radius:3px}
+.err{color:var(--bad)}
+dialog{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);width:min(560px,94vw)}
+dialog textarea,dialog input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px;margin:4px 0 8px}
+dialog textarea{min-height:180px}
+.muted{color:var(--muted)}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;display:none;z-index:20}
+#btnFilters{display:none}
+@media (max-width:700px){.job{grid-template-columns:40px 1fr}.actions{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}
+  #btnFilters{display:inline-block}.filters.collapsed>*:not(#f_q):not(#btnFilters){display:none}.filters input[type=search]{flex:1;min-width:0}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Localizador de Vagas</h1>
+  <div class="kpis" id="kpis"></div>
+  <div class="spacer"></div>
+  <button id="btnImport">+ Importar vaga</button>
+  <button class="primary" id="btnCollect">Coletar agora</button>
+</header>
+<nav id="tabs"></nav>
+<div class="filters collapsed" id="filters">
+  <input type="search" id="f_q" placeholder="Buscar (minecraft, podcast…)">
+  <button id="btnFilters" type="button">Filtros</button>
+  <input id="f_exclude" placeholder="Excluir palavras (a, b)">
+  <select id="f_spec"><option value="">Especialidade</option></select>
+  <select id="f_remote">
+    <option value="">Local</option><option value="not_restricted">Sem restrição conhecida</option>
+    <option value="worldwide">Qualquer país</option><option value="restricted">Com restrição</option>
+    <option value="unknown">Não informado</option><option value="onsite">Presencial/híbrido</option>
+  </select>
+  <select id="f_payment">
+    <option value="">Pagamento</option><option value="per_video">Por vídeo</option><option value="hourly">Por hora</option>
+    <option value="fixed">Projeto fechado</option><option value="monthly_retainer">Mensal/retainer</option>
+    <option value="salary">Salário anual</option><option value="revenue_share">Divisão de receita</option><option value="unspecified">Não informado</option>
+  </select>
+  <select id="f_currency"><option value="">Moeda</option><option>USD</option><option>EUR</option><option>GBP</option><option>INR</option><option>CAD</option><option>AUD</option><option>BRL</option></select>
+  <input id="f_min_comp" type="number" min="0" placeholder="Valor mín." style="width:100px" title="Vagas sem valor informado continuam aparecendo">
+  <select id="f_software"><option value="">Programa</option></select>
+  <select id="f_experience"><option value="">Experiência</option><option>Iniciante aceito</option><option>Júnior</option><option>Pede experiência</option><option>Experiente</option></select>
+  <select id="f_employment"><option value="">Contrato</option><option>Freelance</option><option>Contract</option><option>Part-time</option><option>Full-time</option><option>Long-term</option></select>
+  <select id="f_source"><option value="">Fonte</option></select>
+  <select id="f_max_age_h"><option value="">Qualquer data</option><option value="6">Últimas 6 h</option><option value="24">Últimas 24 h</option><option value="72">3 dias</option><option value="168">7 dias</option></select>
+  <input id="f_min_score" type="number" min="0" max="100" placeholder="Nota mín." style="width:90px">
+  <label><input type="checkbox" id="f_has_comp"> com valor</label>
+  <label><input type="checkbox" id="f_include_dups"> mostrar repostagens</label>
+  <button id="btnClear">Limpar</button>
+</div>
+<main id="main"></main>
+<aside id="detail"></aside>
+<dialog id="dlgImport">
+  <form method="dialog" id="formImport">
+    <h3 style="margin-top:0">Importar vaga manualmente</h3>
+    <p class="muted" style="margin-top:0">Para Discord, YT Jobs, X e outras fontes sem coleta automática. Cole o link da mensagem/vaga e o texto. Em links do Discord, a data de publicação é lida do próprio ID da mensagem.</p>
+    <label>Link</label><input name="url" placeholder="https://discord.com/channels/… ou https://ytjobs.co/job/…">
+    <label>Título (opcional)</label><input name="title">
+    <label>Texto da vaga</label><textarea name="text" required></textarea>
+    <div class="row"><button value="cancel" formnovalidate>Cancelar</button><button class="primary" value="ok">Importar</button></div>
+  </form>
+</dialog>
+<div class="toast" id="toast"></div>
+<script>
+"use strict";
+const TABS = [
+  ["new", "Novas"], ["best", "Melhores"], ["recent", "Recém-publicadas"], ["all", "Todas"],
+  ["saved", "Salvas"], ["pipeline", "Candidaturas"], ["sources", "Fontes"], ["errors", "Erros"],
+  ["alerts", "Alertas"], ["stats", "Estatísticas"], ["hidden", "Ocultas"],
+];
+const JOB_VIEWS = new Set(["new", "best", "recent", "all", "saved", "pipeline", "hidden"]);
+const SPEC = {youtube:"YouTube", long_form:"Long-form", short_form:"Shorts/Reels", gaming:"Gaming", podcast:"Podcast",
+  repurposing:"Reaproveitamento", motion_graphics:"Motion graphics", documentary:"Documentário/narrativa",
+  talking_head:"Talking head", vlog:"Vlog", ads_ugc:"Anúncios/UGC", animation:"Animação", thumbnail:"Thumbnail"};
+const SOFTWARE = ["Premiere Pro","After Effects","DaVinci Resolve","Final Cut Pro","CapCut","Photoshop","Blender","Cinema 4D","Audition","Descript"];
+const STATUS = {new:"Nova", interested:"Interessado", applied:"Aplicada", interviewing:"Em conversa", rejected:"Recusada", closed:"Encerrada"};
+const KIND = {live:["NOVA","new"], backfill:["importação inicial",""], late:["vista agora, publicada antes","warn"], manual:["manual",""]};
+const SCOPE = {worldwide:["qualquer país","ok"], restricted:["com restrição","warn"], onsite:["presencial","bad"], unknown:["local não informado",""]};
+const UNIT = {video:"vídeo", short:"short", minute:"min", hour:"h", month:"mês", week:"semana", year:"ano", project:"projeto", unknown:"?"};
+const PAY = {per_video:"por vídeo", hourly:"por hora", fixed:"projeto fechado", monthly_retainer:"mensal", salary:"salário", revenue_share:"divisão de receita", unspecified:"não informado"};
+
+let state = {tab: localGet("tab") || "new", selected: null, jobs: []};
+
+function localGet(k){ try { return localStorage.getItem("vagas_" + k); } catch { return null; } }
+function localSet(k, v){ try { localStorage.setItem("vagas_" + k, v); } catch {} }
+function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function safeUrl(u){ return /^https?:\/\//i.test(u || "") ? u : null; }
+function link(u, text, cls){ const s = safeUrl(u); return s ? `<a ${cls ? `class="${cls}"` : ""} href="${esc(s)}" target="_blank" rel="noopener noreferrer">${esc(text)}</a>` : ""; }
+function ago(iso){
+  if (!iso) return "—";
+  const h = (Date.now() - new Date(iso).getTime()) / 36e5;
+  if (h < 0) return "agora";
+  if (h < 1) return `há ${Math.max(1, Math.round(h * 60))} min`;
+  if (h < 48) return `há ${Math.round(h)} h`;
+  return `há ${Math.round(h / 24)} dias`;
+}
+function fmtDate(iso){ return iso ? new Date(iso).toLocaleString("pt-BR", {dateStyle:"short", timeStyle:"short"}) : "—"; }
+function money(j){
+  if (j.comp_min == null) return "";
+  const cur = j.comp_currency || "moeda?";
+  const f = n => Number(n).toLocaleString("pt-BR", {maximumFractionDigits: 0});
+  const v = j.comp_max && j.comp_max !== j.comp_min ? `${f(j.comp_min)}–${f(j.comp_max)}` : f(j.comp_min);
+  return `${cur} ${v}/${UNIT[j.comp_unit] || j.comp_unit}`;
+}
+function toast(msg){ const t = document.getElementById("toast"); t.textContent = msg; t.style.display = "block"; setTimeout(() => t.style.display = "none", 2600); }
+
+async function api(path, body){
+  const opt = body ? {method: "POST", headers: {"Content-Type": "application/json", "X-Vagas": "1"}, body: JSON.stringify(body)} : {};
+  const r = await fetch(path, opt);
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok && r.status !== 409) throw new Error(data.error || r.statusText);
+  return data;
+}
+
+// ------------------------------------------------------------------ cabeçalho
+async function loadStats(){
+  const s = await api("/api/stats");
+  const fu = s.follow_ups_due ? `<span class="kpi" style="color:var(--warn)">follow-ups vencidos <b>${s.follow_ups_due}</b></span>` : "";
+  document.getElementById("kpis").innerHTML =
+    `<span class="kpi">novas 24 h <b>${s.new_24h}</b></span><span class="kpi">fortes 24 h <b>${s.strong_24h}</b></span>` +
+    `<span class="kpi">únicas <b>${s.unique}</b></span><span class="kpi">candidaturas <b>${s.applied}</b></span>${fu}` +
+    (s.collecting ? `<span class="kpi">coletando…</span>` : "");
+  const src = document.getElementById("f_source");
+  if (src.options.length === 1) for (const x of s.sources) src.add(new Option(x.name, x.id));
+  return s;
+}
+
+// ------------------------------------------------------------------ abas e filtros
+function renderTabs(){
+  document.getElementById("tabs").innerHTML = TABS.map(([k, l]) => `<button data-tab="${k}" class="${k === state.tab ? "on" : ""}">${l}</button>`).join("");
+  document.getElementById("filters").style.display = JOB_VIEWS.has(state.tab) ? "flex" : "none";
+}
+document.getElementById("tabs").addEventListener("click", e => {
+  const t = e.target.closest("button[data-tab]"); if (!t) return;
+  state.tab = t.dataset.tab; localSet("tab", state.tab); renderTabs(); refresh();
+});
+for (const [k, l] of Object.entries(SPEC)) document.getElementById("f_spec").add(new Option(l, k));
+for (const s of SOFTWARE) document.getElementById("f_software").add(new Option(s, s));
+const FILTER_IDS = ["q","exclude","spec","remote","payment","currency","min_comp","software","experience","employment","source","max_age_h","min_score","has_comp","include_dups"];
+let debounce;
+for (const id of FILTER_IDS) {
+  const el = document.getElementById("f_" + id);
+  const saved = localGet("f_" + id);
+  if (saved != null) { if (el.type === "checkbox") el.checked = saved === "1"; else el.value = saved; }
+  el.addEventListener(el.tagName === "INPUT" && el.type !== "checkbox" ? "input" : "change", () => {
+    localSet("f_" + id, el.type === "checkbox" ? (el.checked ? "1" : "") : el.value);
+    clearTimeout(debounce); debounce = setTimeout(refresh, 250);
+  });
+}
+document.getElementById("btnFilters").onclick = () => document.getElementById("filters").classList.toggle("collapsed");
+document.getElementById("btnClear").onclick = () => {
+  for (const id of FILTER_IDS) { const el = document.getElementById("f_" + id); if (el.type === "checkbox") el.checked = false; else el.value = ""; localSet("f_" + id, ""); }
+  refresh();
+};
+function filterQuery(){
+  const p = new URLSearchParams({view: state.tab});
+  for (const id of FILTER_IDS) {
+    const el = document.getElementById("f_" + id);
+    const v = el.type === "checkbox" ? (el.checked ? "1" : "") : el.value.trim();
+    if (v) p.set(id, v);
+  }
+  return p.toString();
+}
+
+// ------------------------------------------------------------------ lista de vagas
+function jobCard(j){
+  const sc = j.score >= 60 ? "hi" : j.score >= 40 ? "mid" : "";
+  const kind = KIND[j.discovery_kind] || ["", ""];
+  const scope = SCOPE[j.remote_scope] || ["", ""];
+  const specs = (j.specializations || []).filter(s => SPEC[s]).slice(0, 5).map(s => `<span class="tag">${esc(SPEC[s])}</span>`).join("");
+  const flags = (j.legit_flags || []).length ? `<span class="tag bad">⚠ ${esc(j.legit_flags[0])}</span>` : "";
+  const st = j.user_status !== "new" ? `<span class="tag ok">${esc(STATUS[j.user_status])}</span>` : "";
+  const dups = j.dup_count ? `<span class="tag">+${j.dup_count} repostagem${j.dup_count > 1 ? "s" : ""}</span>` : "";
+  const dupOf = j.duplicate_of ? `<span class="tag warn">repostagem de #${j.duplicate_of}</span>` : "";
+  const kindTag = kind[0] ? `<span class="tag ${kind[1]}">${esc(kind[0])}</span>` : "";
+  const unclear = j.post_kind === "unclear" ? `<span class="tag warn">tipo de post incerto</span>` : "";
+  return `<div class="job ${state.selected === j.id ? "sel" : ""}" data-id="${j.id}">
+    <div class="score ${sc}" title="nota de relevância">${j.score}</div>
+    <div>
+      <div class="title">${esc(j.title)}</div>
+      <div class="meta">
+        ${money(j) ? `<span class="comp">${esc(money(j))}</span>` : `<span>valor não informado</span>`}
+        <span>${esc(j.community || j.source_name)}${j.author ? " · " + esc(j.author) : ""}${j.company ? " · " + esc(j.company) : ""}</span>
+        <span title="${esc(fmtDate(j.published_at))}">publicada ${ago(j.published_at)}</span>
+        <span title="${esc(fmtDate(j.discovered_at))}">descoberta ${ago(j.discovered_at)}</span>
+      </div>
+      <div class="tags">${kindTag}${st}<span class="tag ${scope[1]}">${esc(scope[0])}</span>${specs}${unclear}${flags}${dups}${dupOf}</div>
+    </div>
+    <div class="actions">
+      ${link(j.source_url, "Abrir original", "btn")}
+      ${j.user_status === "applied" ? "" : `<button data-act="applied">Marquei aplicada</button>`}
+      <button data-act="save">${j.saved ? "★ Salva" : "☆ Salvar"}</button>
+      <button data-act="hide">${j.hidden ? "Mostrar" : "Ocultar"}</button>
+    </div>
+  </div>`;
+}
+async function loadJobs(){
+  const main = document.getElementById("main");
+  state.jobs = await api("/api/jobs?" + filterQuery());
+  const hint = {new: "Vagas que apareceram desde a última coleta (não inclui a importação inicial de cada fonte).",
+    best: "Ordenadas pela nota, publicadas nos últimos 14 dias (mude em “Qualquer data”). Só status Nova/Interessado.", recent: "Ordenadas pela data de publicação na fonte.",
+    pipeline: "Vagas em andamento: interessado, aplicada, em conversa."}[state.tab];
+  main.innerHTML = (hint ? `<p class="muted" style="margin-top:0">${hint} ${state.jobs.length} resultado(s).</p>` : "") +
+    (state.jobs.length ? state.jobs.map(jobCard).join("") : `<div class="empty">Nada por aqui com esses filtros.</div>`);
+}
+document.getElementById("main").addEventListener("click", async e => {
+  const card = e.target.closest(".job"); if (!card) return;
+  const id = Number(card.dataset.id);
+  if (e.target.closest("a")) return;
+  const act = e.target.closest("button[data-act]")?.dataset.act;
+  const j = state.jobs.find(x => x.id === id);
+  if (act === "applied") { await api(`/api/jobs/${id}`, {user_status: "applied"}); toast("Marcada como aplicada"); return refresh(); }
+  if (act === "save") { await api(`/api/jobs/${id}`, {saved: j.saved ? 0 : 1}); return refresh(); }
+  if (act === "hide") { await api(`/api/jobs/${id}`, {hidden: j.hidden ? 0 : 1}); return refresh(); }
+  openDetail(id);
+});
+
+// ------------------------------------------------------------------ detalhe
+async function openDetail(id){
+  state.selected = id;
+  document.querySelectorAll(".job").forEach(el => el.classList.toggle("sel", Number(el.dataset.id) === id));
+  const j = await api(`/api/jobs/${id}`);
+  const d = document.getElementById("detail");
+  const rows = [
+    ["Fonte", `${esc(j.source_name)}${j.community ? " · " + esc(j.community) : ""}`],
+    ["Quem postou", esc(j.author || "—")], ["Empresa/canal", esc(j.company || "—")],
+    ["Publicada", `${esc(fmtDate(j.published_at))} (${ago(j.published_at)})`],
+    ["Descoberta", `${esc(fmtDate(j.discovered_at))} · ${esc((KIND[j.discovery_kind] || [j.discovery_kind])[0])}`],
+    ["Remuneração", money(j) ? `${esc(money(j))}<br><span class="muted">trecho: “${esc(j.comp_text)}”</span>` : "não informada"],
+    ["Modelo de pagamento", esc(PAY[j.payment_model] || j.payment_model)],
+    ["Contrato", esc(j.employment_type || "—")],
+    ["Local", `${esc((SCOPE[j.remote_scope] || [j.remote_scope])[0])}${j.location_text ? " — " + esc(j.location_text) : ""}`],
+    ["Programas", esc((j.software || []).join(", ") || "—")],
+    ["Especialidades", esc((j.specializations || []).map(s => SPEC[s] || s).join(", ") || "—")],
+    ["Experiência", esc(j.experience || "—")], ["Idiomas exigidos", esc((j.languages || []).join(", ") || "—")],
+    ["Confiança (legítima)", `${Math.round((j.legit_confidence || 0) * 100)}%${(j.legit_flags || []).length ? " — " + esc(j.legit_flags.join("; ")) : ""}`],
+  ];
+  const related = (j.related || []).map(r => `<li>${link(r.source_url, r.community || r.source_name)} · ${ago(r.published_at || r.discovered_at)}${r.dup_reason ? ` <span class="muted">(${esc(r.dup_reason)})</span>` : ""}${r.duplicate_of == null ? " <b>original</b>" : ""}</li>`).join("");
+  d.innerHTML = `
+    <div class="row" style="justify-content:space-between;margin-top:0"><span class="muted">#${j.id}</span><button id="closeDetail">Fechar ✕</button></div>
+    <h2>${esc(j.title)}</h2>
+    <div class="row">${link(j.source_url, "Abrir original ↗", "btn")} ${j.apply_url && j.apply_url !== j.source_url ? link(j.apply_url, "Link de candidatura ↗") : ""}</div>
+    <div class="row">
+      <label>Status <select id="d_status">${Object.entries(STATUS).map(([k, l]) => `<option value="${k}" ${k === j.user_status ? "selected" : ""}>${l}</option>`).join("")}</select></label>
+      <label>Follow-up <input type="date" id="d_follow" value="${esc((j.follow_up_at || "").slice(0, 10))}"></label>
+      <label><input type="checkbox" id="d_saved" ${j.saved ? "checked" : ""}> salva</label>
+    </div>
+    <textarea id="d_notes" placeholder="Notas (o que mandei, valor combinado, próximos passos…)">${esc(j.notes || "")}</textarea>
+    <div class="row"><button class="primary" id="d_save">Salvar acompanhamento</button>${j.applied_at ? `<span class="muted">aplicada em ${esc(fmtDate(j.applied_at))}</span>` : ""}</div>
+    <h3>Por que esta nota (${j.score})</h3>
+    <ul class="reasons">${(j.score_reasons || []).map(r => `<li>${esc(r)}</li>`).join("")}</ul>
+    <table>${rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")}</table>
+    ${related ? `<h3>Repostagens / mesma vaga</h3><ul class="reasons">${related}</ul>` : ""}
+    <h3>Texto original</h3>
+    <div class="desc">${esc(j.description || "(sem texto)")}</div>
+    <p class="muted">Valores, local e requisitos são lidos do texto por regras. Confira sempre o post original antes de aplicar e nunca pague para conseguir vaga.</p>`;
+  d.classList.add("open");
+  document.getElementById("closeDetail").onclick = () => { d.classList.remove("open"); state.selected = null; };
+  document.getElementById("d_save").onclick = async () => {
+    const f = document.getElementById("d_follow").value;
+    await api(`/api/jobs/${id}`, {user_status: document.getElementById("d_status").value, notes: document.getElementById("d_notes").value,
+      follow_up_at: f ? f + "T12:00:00Z" : null, saved: document.getElementById("d_saved").checked ? 1 : 0});
+    toast("Salvo"); refresh();
+  };
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") document.getElementById("detail").classList.remove("open"); });
+
+// ------------------------------------------------------------------ outras abas
+async function loadSources(){
+  const rows = await api("/api/sources");
+  document.getElementById("main").innerHTML = `<p class="muted" style="margin-top:0">Cada fonte é verificada no seu intervalo. Falhas entram em espera crescente e não param as outras fontes.</p>
+  <table class="grid"><tr><th>Fonte</th><th>Método</th><th>Intervalo</th><th>Último sucesso</th><th>Próxima</th><th>Vagas (24 h)</th><th>Falhas</th><th></th></tr>
+  ${rows.map(s => `<tr>
+    <td><b>${esc(s.name)}</b><br>${link(s.url, "site")}</td><td>${esc(s.method)}</td><td>${s.interval_min >= 60 ? (s.interval_min / 60).toFixed(0) + " h" : s.interval_min + " min"}</td>
+    <td>${ago(s.last_success_at)}</td><td>${s.enabled ? esc(fmtDate(s.next_check_at)) : "pausada"}</td><td>${s.jobs} (${s.jobs_24h})</td>
+    <td>${s.consecutive_failures ? `<span class="err">${s.consecutive_failures} seguidas</span><br><span class="muted">${esc(s.last_error || "")}</span>` : (s.errors_24h ? `${s.errors_24h} em 24 h` : "—")}</td>
+    <td><button data-src="${esc(s.id)}" data-en="${s.enabled ? 0 : 1}">${s.enabled ? "Pausar" : "Ativar"}</button>
+        ${s.method !== "manual" && s.enabled ? `<button data-run="${esc(s.id)}">Coletar</button>` : ""}</td></tr>`).join("")}</table>`;
+}
+async function loadRuns(){
+  const rows = await api("/api/runs?errors=1");
+  document.getElementById("main").innerHTML = rows.length ? `<table class="grid"><tr><th>Quando</th><th>Fonte</th><th>Status</th><th>HTTP</th><th>Erro</th></tr>
+    ${rows.map(r => `<tr><td>${esc(fmtDate(r.started_at))}</td><td>${esc(r.source_id)}</td><td class="err">${esc(r.status)}</td><td>${esc(r.http_status ?? "")}</td><td>${esc(r.error)}</td></tr>`).join("")}</table>`
+    : `<div class="empty">Nenhuma falha de coleta registrada.</div>`;
+}
+async function loadAlerts(){
+  const rows = await api("/api/notifications");
+  document.getElementById("main").innerHTML = `<p class="muted" style="margin-top:0">Sem webhook do Discord/Telegram configurado no .env, os alertas ficam só registrados aqui.</p>` +
+    (rows.length ? `<table class="grid"><tr><th>Quando</th><th>Tipo</th><th>Canal</th><th>Status</th><th>Mensagem</th></tr>
+    ${rows.map(r => `<tr><td>${esc(fmtDate(r.sent_at))}</td><td>${esc(r.kind)}</td><td>${esc(r.channel)}</td><td>${esc(r.status)}${r.error ? `<br><span class="err">${esc(r.error)}</span>` : ""}</td><td style="white-space:pre-wrap">${esc(r.payload)}</td></tr>`).join("")}</table>`
+    : `<div class="empty">Nenhum alerta ainda.</div>`);
+}
+async function loadStatsTab(){
+  const s = await loadStats();
+  const max = Math.max(1, ...s.per_day.map(d => d.n));
+  const st = Object.entries(STATUS).map(([k, l]) => `<tr><td>${l}</td><td>${s.by_status[k] || 0}</td></tr>`).join("");
+  document.getElementById("main").innerHTML = `
+    <h3>Vagas únicas descobertas por dia</h3>
+    <table class="grid">${s.per_day.map(d => `<tr><td style="width:110px">${esc(d.day)}</td><td><div class="bar" style="width:${(d.n / max * 100).toFixed(0)}%"></div></td><td style="width:60px">${d.n}</td></tr>`).join("")}</table>
+    <h3>Candidaturas</h3><table class="grid">${st}</table>
+    <h3>Por fonte</h3><table class="grid"><tr><th>Fonte</th><th>Vagas</th><th>Últimas 24 h</th></tr>${s.sources.map(x => `<tr><td>${esc(x.name)}</td><td>${x.jobs}</td><td>${x.jobs_24h}</td></tr>`).join("")}</table>
+    <p class="muted">Total ${s.total} registros · ${s.unique} únicas · ${s.duplicates} repostagens ligadas à original.</p>`;
+}
+document.getElementById("main").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-src]");
+  if (b) { await api(`/api/sources/${b.dataset.src}`, {enabled: b.dataset.en === "1"}); return refresh(); }
+  const r = e.target.closest("button[data-run]");
+  if (r) { const res = await api("/api/collect", {source: r.dataset.run}); toast(res.started ? "Coleta iniciada" : "Já existe uma coleta em andamento"); setTimeout(refresh, 4000); }
+});
+
+// ------------------------------------------------------------------ ações do topo
+document.getElementById("btnCollect").onclick = async () => {
+  const res = await api("/api/collect", {});
+  toast(res.started ? "Coleta iniciada — o Reddit espera 30 s entre requisições" : "Já existe uma coleta em andamento");
+  setTimeout(refresh, 5000);
+};
+const dlg = document.getElementById("dlgImport");
+document.getElementById("btnImport").onclick = () => { document.getElementById("formImport").reset(); dlg.showModal(); };
+dlg.addEventListener("close", async () => {
+  if (dlg.returnValue !== "ok") return;
+  const f = new FormData(document.getElementById("formImport"));
+  try {
+    const res = await api("/api/import", {url: f.get("url"), title: f.get("title"), text: f.get("text")});
+    toast(res.created ? `Importada (nota ${res.job.score})` : "Essa vaga já estava no banco");
+    refresh(); openDetail(res.job.id);
+  } catch (err) { toast("Erro: " + err.message); }
+});
+
+async function refresh(){
+  try {
+    loadStats();
+    if (JOB_VIEWS.has(state.tab)) await loadJobs();
+    else if (state.tab === "sources") await loadSources();
+    else if (state.tab === "errors") await loadRuns();
+    else if (state.tab === "alerts") await loadAlerts();
+    else if (state.tab === "stats") await loadStatsTab();
+  } catch (err) { document.getElementById("main").innerHTML = `<div class="empty err">Erro: ${esc(err.message)}</div>`; }
+}
+renderTabs();
+refresh();
+setInterval(() => { if (!document.hidden && !document.getElementById("detail").classList.contains("open")) refresh(); }, 120000);
+</script>
+</body>
+</html>
