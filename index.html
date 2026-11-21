@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffd6e5">
+<title>Localizador de Vagas da Mica</title>
+<link rel="icon" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rosa-50:#fff6f9;--rosa-100:#ffe6ee;--rosa-200:#ffcfdf;--rosa-300:#f9aac6;--rosa-500:#e2709b;--rosa-700:#b73f70;
+  --vinho:#5e1f3a;--texto:#4a2a36;--suave:#8f6476;--creme:#fffdfb;--ruivo:#c2410c;--verde:#2f8a5f;--verde-bg:#e3f5ea;
+  --linha:#f4c6d6;--sombra:0 6px 20px rgba(183,63,112,.12);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#ffe9f1 0%,#ffd6e5 100%) fixed;color:var(--texto);
+  font:16px/1.5 "Fredoka",ui-rounded,"Segoe UI",system-ui,sans-serif}
+.app{max-width:560px;margin:0 auto;padding:16px 16px 48px}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--rosa-700)}
+.topo{display:flex;align-items:center;gap:12px}
+.avatar{width:68px;height:68px;border-radius:50%;border:3px solid #fff;box-shadow:var(--sombra);object-fit:cover;flex:none}
+.topo h1{font-size:21px;line-height:1.2;margin:0;color:var(--vinho);font-weight:600}
+.assinatura{font-family:"Caveat",cursive;font-size:20px;color:var(--rosa-700);margin:0}
+.engrenagem{margin-left:auto;border:0;background:#fff;border-radius:50%;width:42px;height:42px;font-size:20px;box-shadow:var(--sombra);flex:none}
+.bilhete{margin:14px 0 12px;background:var(--creme);border:1.5px dashed var(--rosa-300);border-radius:16px;padding:10px 14px;
+  font-family:"Caveat",cursive;font-size:22px;line-height:1.25;color:var(--vinho)}
+.abas{display:flex;gap:6px;background:rgba(255,255,255,.6);padding:5px;border-radius:999px;margin-bottom:14px}
+.abas button{flex:1;border:0;background:transparent;border-radius:999px;padding:9px 6px;font-weight:500;color:var(--suave);font-size:15px;white-space:nowrap}
+.abas button.on{background:#fff;color:var(--vinho);box-shadow:0 2px 8px rgba(183,63,112,.15)}
+.bolha{display:inline-block;min-width:22px;padding:0 6px;border-radius:999px;background:var(--rosa-500);color:#fff;font-size:12px;line-height:20px;margin-left:2px}
+.bolha:empty{display:none}
+.cartao{background:#fff;border-radius:22px;padding:18px;box-shadow:var(--sombra);border:1px solid var(--linha)}
+.progresso{margin-bottom:12px}
+.progresso .rotulo{display:flex;justify-content:space-between;font-size:15px;color:var(--vinho);margin-bottom:6px}
+.barra{height:14px;background:#fff;border-radius:999px;border:1px solid var(--linha);overflow:hidden}
+.barra i{display:block;height:100%;background:linear-gradient(90deg,var(--rosa-300),var(--rosa-500));border-radius:999px;transition:width .4s ease}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--suave)}
+.chip{background:var(--rosa-100);color:var(--vinho);border-radius:999px;padding:3px 10px;font-size:13px}
+.chip.dinheiro{background:var(--verde-bg);color:var(--verde)}
+.vaga h2{font-size:20px;line-height:1.3;margin:10px 0 4px;color:var(--vinho);font-weight:600;overflow-wrap:anywhere}
+.empresa{color:var(--suave);margin:0 0 10px}
+.texto{white-space:pre-line;font-size:14.5px;color:var(--texto);background:var(--rosa-50);border-radius:14px;padding:10px 12px;margin:12px 0 0;
+  max-height:7.5em;overflow:hidden;position:relative;overflow-wrap:anywhere}
+.texto.aberto{max-height:none}
+.lermais{border:0;background:none;color:var(--rosa-700);padding:6px 0 0;font-size:14px}
+.abrir{display:block;text-align:center;margin-top:12px;padding:11px;border-radius:14px;background:var(--rosa-100);color:var(--vinho);
+  text-decoration:none;font-weight:500}
+.acoes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.acoes button{border:0;border-radius:16px;padding:12px 6px;font-weight:500;font-size:14.5px;line-height:1.2}
+.b-quero{background:var(--rosa-500);color:#fff}
+.b-apliquei{background:var(--verde-bg);color:var(--verde)}
+.b-nao{background:#f6eef1;color:var(--suave)}
+.acoes button:active{transform:scale(.97)}
+.rodape-acoes{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:14px;color:var(--suave)}
+.desfazer{border:0;background:none;color:var(--rosa-700);padding:4px 0}
+.desfazer[hidden]{display:none}
+.festa{text-align:center}
+.festa img{width:min(240px,70%);border-radius:24px;border:4px solid #fff;box-shadow:var(--sombra);margin:4px auto 10px;display:block}
+.festa h2{font-family:"Caveat",cursive;font-size:32px;line-height:1.1;color:var(--vinho);margin:6px 0}
+.festa p{margin:6px 0;color:var(--suave)}
+.fogo{display:inline-block;background:#fff3e8;color:var(--ruivo);border-radius:999px;padding:4px 12px;margin:6px 0 12px;font-weight:500}
+.botoes{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.botao{border:0;border-radius:999px;padding:10px 16px;background:#fff;box-shadow:var(--sombra);color:var(--vinho);font-weight:500}
+.botao.forte{background:var(--rosa-500);color:#fff}
+.item{background:#fff;border-radius:18px;padding:12px 14px;border:1px solid var(--linha);margin-bottom:10px}
+.item h3{font-size:16px;margin:0 0 2px;color:var(--vinho);font-weight:600;overflow-wrap:anywhere}
+.item .linha{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.item .linha a,.item .linha button{border:0;border-radius:999px;padding:6px 12px;font-size:14px;text-decoration:none}
+.mini-abrir{background:var(--rosa-100);color:var(--vinho)}
+.mini-ok{background:var(--verde-bg);color:var(--verde)}
+.mini-tirar{background:#f6eef1;color:var(--suave)}
+.mini-salvar{background:var(--rosa-500);color:#fff}
+.feito{font-size:13px;color:var(--verde)}
+.titulo-secao{font-size:15px;color:var(--vinho);margin:18px 0 8px;font-weight:500}
+.vazio{text-align:center;color:var(--suave);padding:18px 8px}
+.mais-texto{margin-top:14px}
+.mais-texto summary{cursor:pointer;color:var(--suave);font-size:14px;padding:8px 0}
+.trecho{font-size:13.5px;line-height:1.45;color:var(--texto);background:var(--rosa-50);border-radius:12px;padding:7px 10px;margin:8px 0 0;overflow-wrap:anywhere}
+.trecho mark{background:#ffe08a;color:inherit;border-radius:4px;padding:0 2px}
+.mini-jonas{border:0;border-radius:999px;padding:6px 12px;font-size:14px;background:#fff3e8;color:var(--ruivo)}
+#aviso{position:fixed;left:50%;bottom:20px;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--vinho);color:#fff;
+  padding:10px 16px;border-radius:999px;font-size:14.5px;box-shadow:var(--sombra);transition:all .25s ease;z-index:60;max-width:90vw;text-align:center}
+#aviso.on{opacity:1;transform:translate(-50%,0)}
+#aviso.clicavel.on{pointer-events:auto}
+.aviso-desfazer{border:0;background:none;color:var(--rosa-200);text-decoration:underline;font-size:14px;margin-left:10px;padding:0}
+.previa{background:var(--rosa-50);border:1.5px dashed var(--rosa-300);border-radius:14px;padding:10px 12px}
+.previa p{margin:0 0 4px}
+.previa-cab{color:var(--rosa-700);font-size:14px}
+.previa-vaga{color:var(--vinho);font-weight:500;overflow-wrap:anywhere}
+.previa-link{display:block;font-size:13.5px;overflow-wrap:anywhere;color:var(--rosa-700)}
+.campo{display:flex;gap:8px}
+.campo input{flex:1;min-width:0;border:1.5px solid var(--linha);border-radius:14px;padding:11px 12px;font:inherit;background:#fff;color:var(--texto)}
+.campo input:focus,textarea:focus{outline:2px solid var(--rosa-300);border-color:var(--rosa-300)}
+.sugestoes{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+.sugestoes button{border:1px solid var(--linha);background:#fff;border-radius:999px;padding:4px 10px;font-size:13px;color:var(--vinho)}
+footer{text-align:center;font-size:13px;color:var(--suave);margin-top:22px}
+dialog{border:0;border-radius:22px;padding:18px;max-width:min(480px,92vw);width:100%;color:var(--texto);box-shadow:0 20px 50px rgba(94,31,58,.25)}
+dialog::backdrop{background:rgba(94,31,58,.35)}
+dialog h2{margin:0 0 10px;color:var(--vinho);font-size:19px;font-weight:600}
+dialog label{display:block;font-size:14px;color:var(--vinho);margin:10px 0 4px}
+dialog textarea,dialog input,dialog select{width:100%;border:1.5px solid var(--linha);border-radius:12px;padding:9px 10px;font:inherit;color:var(--texto);background:#fff}
+dialog textarea{min-height:110px;resize:vertical}
+.dica{font-size:12.5px;color:var(--suave);margin:4px 0 0}
+#coracoes{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+#coracoes span{position:absolute;top:-40px;animation:cair linear forwards}
+@keyframes cair{to{transform:translateY(110vh) rotate(25deg);opacity:.85}}
+@keyframes entra{from{transform:translateY(10px) scale(.98)}to{transform:none}}
+.entra{animation:entra .25s ease}
+@media (prefers-reduced-motion:reduce){.entra,#coracoes span{animation:none!important}.barra i{transition:none}}
+@media (max-width:380px){.abas button{font-size:13.5px}.acoes button{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topo">
+    <img class="avatar" src="img/mica-avatar.webp" alt="Desenho da Mica abraçando o cachorrinho">
+    <div>
+      <h1 id="titulo">Localizador de Vagas da Mica</h1>
+      <p class="assinatura" id="assinatura">feito com amor pelo Jonas</p>
+    </div>
+    <button class="engrenagem" id="btnAjustes" aria-label="Minhas palavrinhas">⚙️</button>
+  </header>
+
+  <div class="bilhete" id="bilhete">💗 carregando seu bilhetinho…</div>
+
+  <nav class="abas" id="abas">
+    <button data-aba="caixinha" class="on">💌 Caixinha <span class="bolha" id="nCaixa"></span></button>
+    <button data-aba="lista">📝 Minha lista <span class="bolha" id="nLista"></span></button>
+    <button data-aba="buscar">🔎 Buscar</button>
+  </nav>
+
+  <main id="tela"></main>
+  <footer id="rodape"></footer>
+</div>
+
+<dialog id="dlgAjustes">
+  <form method="dialog">
+    <h2>Minhas palavrinhas 💗</h2>
+    <label for="aPalavras">O que você procura (separe com vírgula)</label>
+    <textarea id="aPalavras"></textarea>
+    <p class="dica">Tem que aparecer no título da vaga. Ex.: python, cientista de dados, data engineer</p>
+    <label for="aSem">Esconder vagas com estas palavras no título</label>
+    <input id="aSem">
+    <label for="aDias">Mostrar na caixinha vagas publicadas nos últimos</label>
+    <select id="aDias"><option value="3">3 dias</option><option value="7">7 dias</option><option value="14">14 dias</option><option value="30">30 dias</option></select>
+    <p class="dica">Os ajustes ficam guardados neste celular/computador.</p>
+    <div class="botoes" style="margin-top:14px">
+      <button class="botao" value="cancelar" formnovalidate>Cancelar</button>
+      <button class="botao forte" value="salvar">Salvar</button>
+    </div>
+    <p style="text-align:center;margin:14px 0 0"><button type="button" class="desfazer" id="btnRecomecar">Recomeçar do zero</button></p>
+  </form>
+</dialog>
+
+<dialog id="dlgJonas">
+  <form method="dialog">
+    <h2 id="jTitulo">✅ Copiado! Agora é só colar no Discord 💌</h2>
+    <div class="previa">
+      <p class="previa-cab" id="jCab">Vaga pro Jonas 💌</p>
+      <p class="previa-vaga" id="jVaga"></p>
+      <a class="previa-link" id="jLink" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+    <textarea id="jTexto" readonly hidden style="min-height:110px;margin-top:10px"></textarea>
+    <p class="dica" id="jDica" hidden>Segure o texto (ou Ctrl+C) para copiar.</p>
+    <div class="botoes" style="margin-top:14px">
+      <button type="button" class="botao" id="jCompartilhar" hidden>📤 Compartilhar</button>
+      <button type="button" class="botao" id="jCopiar">📋 Copiar de novo</button>
+      <button class="botao forte" id="jOk" value="ok">Fechar</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="coracoes" aria-hidden="true"></div>
+<div id="aviso" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+const CHAVE = "mica-vagas-v1";
+let CFG = {}, DADOS = {vagas: []}, aba = "caixinha", desfazer = [], abertoTexto = false, atualId = null, carregadoEm = 0, jonasAberto = false;
+
+// ---------------------------------------------------------------- estado guardado no aparelho
+function carregarEstado(){
+  try { return JSON.parse(localStorage.getItem(CHAVE)) || {}; } catch { return {}; }
+}
+let EST = carregarEstado();
+EST.vistas = EST.vistas || {};
+EST.fogo = EST.fogo || {dias: 0, ultimo: null};
+EST.jonas = EST.jonas || {};  // vagas que ela mandou pra ele (não mexe na caixinha nem na lista dela)
+function salvar(){ try { localStorage.setItem(CHAVE, JSON.stringify(EST)); } catch {} }
+
+// ---------------------------------------------------------------- utilidades
+const $ = s => document.querySelector(s);
+function el(tag, attrs = {}, ...filhos){
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v; else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else if (v !== null && v !== undefined) e.setAttribute(k, v);
+  }
+  for (const f of filhos) if (f !== null && f !== undefined && f !== false) e.append(f.nodeType ? f : String(f));
+  return e;
+}
+function urlSegura(u){ return /^https?:\/\//i.test(u || "") ? u : null; }
+// Texto em duas versões ("back-end" -> "backend" e "back end"), sem acento, sem "(a)" de "Engenheiro(a)"
+function variantes(s){
+  const base = (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\((a|o|as|os|es)\)/g, "").replace(/\//g, " ");
+  return [base.replace(/-/g, ""), base.replace(/-/g, " ")].map(x => x.replace(/\s+/g, " ").trim());
+}
+function separar(t){ return (t || "").split(/[,;\n]/).map(x => x.trim()).filter(Boolean); }
+const escapar = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// "Community Manager." (o celular põe ponto sozinho) vira "Community Manager"; ".net" e "c++" ficam como estão
+function limparTermo(t){ return (t || "").trim().replace(/[.,;:!?…]+$/, "").replace(/^[,;:!?…]+/, "").trim(); }
+// Cada palavra aceita singular e plural: "managers" acha "Manager" e vice-versa.
+// Com `comeco`, a última palavra vale pelo começo (enquanto ela digita): "community mana" acha "Community Manager".
+function padrao(frase, comeco){
+  const ws = frase.split(" ").filter(Boolean);
+  return ws.map((w, i) => {
+    const base = w.length > 3 && /[^s]s$/.test(w) ? w.slice(0, -1) : w;
+    const inteira = escapar(base) + (/[a-z]$/.test(base) ? "(?:e?s)?" : "");
+    return comeco && i === ws.length - 1 && w.length >= 2 ? `(?:${inteira}|${escapar(w)}[a-z0-9]*)` : inteira;
+  }).join("\\s+");
+}
+const regexCache = new Map();
+// A palavra ou FRASE inteira precisa aparecer junta: "community manager" não casa com "Community Engagement Manager"
+function tem(termo, textoV, comeco = false){
+  const chave = termo + (comeco ? "\u0001" : "");
+  let rs = regexCache.get(chave);
+  if (!rs) {
+    rs = variantes(limparTermo(termo)).map(t => t ? new RegExp("(^|[^a-z0-9])(" + padrao(t, comeco) + ")($|[^a-z0-9])") : null);
+    regexCache.set(chave, rs);
+  }
+  return [0, 1].some(i => rs[i] && rs[i].test(textoV[i]));
+}
+function vt(v){ return v._t || (v._t = variantes(v.titulo)); }
+function vx(v){ return v._x || (v._x = variantes(v.texto)); }
+function casaTitulo(v, termos, sem){
+  if (sem.some(x => tem(x, vt(v)))) return false;
+  return termos.some(x => tem(x, vt(v)));
+}
+function horas(iso){ return iso ? (Date.now() - new Date(iso).getTime()) / 36e5 : null; }
+function quando(iso){
+  const h = horas(iso);
+  if (h === null) return "data não informada";
+  if (h < 1) return `há ${Math.max(1, Math.round(h * 60))} min`;
+  if (h < 48) return `há ${Math.round(h)} h`;
+  return `há ${Math.round(h / 24)} dias`;
+}
+function hoje(d = new Date()){ return d.toLocaleDateString("sv-SE"); }
+function palavras(){ return separar(EST.palavras ?? CFG.palavras); }
+function semPalavras(){ return separar(EST.sem ?? CFG.sem); }
+function diasCaixa(){ return Number(EST.dias ?? CFG.dias_na_caixinha ?? 7); }
+function sorteia(lista, semente){ return lista && lista.length ? lista[semente % lista.length] : ""; }
+
+// ---------------------------------------------------------------- listas
+function caixinha(){
+  const ts = palavras(), sem = semPalavras(), lim = diasCaixa() * 24;
+  return DADOS.vagas.filter(v => !EST.vistas[v.id] && (horas(v.publicada || v.descoberta) ?? 0) <= lim && casaTitulo(v, ts, sem));
+}
+function totalDoDia(){ // vistas hoje + o que falta = o "100%" de hoje
+  const vistasHoje = Object.values(EST.vistas).filter(x => x.cx && x.em && hoje(new Date(x.em)) === hoje()).length;
+  return {vistasHoje, faltam: caixinha().length};
+}
+function porAcao(acao){ return DADOS.vagas.filter(v => EST.vistas[v.id]?.acao === acao); }
+
+function marcar(id, acao){
+  desfazer.push({id, antes: EST.vistas[id] || null});
+  EST.vistas[id] = {acao, em: new Date().toISOString()};
+  salvar();
+}
+
+// ---------------------------------------------------------------- telas
+function cartaoVaga(v, extra){
+  const texto = el("div", {class: "texto" + (abertoTexto ? " aberto" : "")}, v.texto || "(a vaga não tem descrição — abra o link)");
+  const lermais = (v.texto || "").length > 260
+    ? el("button", {class: "lermais", onclick: () => { abertoTexto = !abertoTexto; texto.classList.toggle("aberto"); lermais.textContent = abertoTexto ? "mostrar menos" : "ler mais"; }}, abertoTexto ? "mostrar menos" : "ler mais")
+    : null;
+  const url = urlSegura(v.url);
+  return el("article", {class: "cartao vaga entra"},
+    el("div", {class: "meta"}, el("span", {class: "chip"}, v.fonte), el("span", {}, "publicada " + quando(v.publicada || v.descoberta))),
+    el("h2", {}, v.titulo),
+    v.empresa ? el("p", {class: "empresa"}, "🏢 " + v.empresa) : null,
+    el("div", {class: "meta"}, el("span", {class: "chip"}, "🌎 " + (v.local || "Remoto")), v.valor ? el("span", {class: "chip dinheiro"}, "💰 " + v.valor) : null),
+    texto, lermais,
+    url ? el("a", {class: "abrir", href: url, target: "_blank", rel: "noopener noreferrer"}, "Abrir a vaga ↗") : null,
+    extra || null);
+}
+
+function telaCaixinha(){
+  const fila = caixinha();
+  const {vistasHoje, faltam} = totalDoDia();
+  const total = vistasHoje + faltam;
+  const pct = total ? Math.round(vistasHoje / total * 100) : 100;
+  $("#tela").replaceChildren();
+  if (!fila.length) return telaFesta(vistasHoje);
+  const v = fila.find(x => x.id === atualId) || fila[0];  // se chegarem vagas novas, a que ela está lendo não troca
+  atualId = v.id;
+  const acoes = el("div", {class: "acoes"},
+    el("button", {class: "b-quero", onclick: () => agir(v.id, "quero")}, "💌 Quero aplicar"),
+    el("button", {class: "b-apliquei", onclick: () => agir(v.id, "apliquei")}, "✅ Já apliquei"),
+    el("button", {class: "b-nao", onclick: () => agir(v.id, "nao")}, "🙈 Não é pra mim"));
+  const rodape = el("div", {class: "rodape-acoes"},
+    el("span", {}, faltam === 1 ? "última vaguinha! 💪" : `faltam ${faltam}`),
+    el("button", {class: "desfazer", hidden: desfazer.length ? null : "", onclick: voltar}, "↩ desfazer"));
+  $("#tela").append(
+    el("div", {class: "progresso"},
+      el("div", {class: "rotulo"}, el("span", {}, `Você já viu ${vistasHoje} de ${total} 💗`), el("span", {}, pct + "%")),
+      el("div", {class: "barra"}, el("i", {style: `width:${pct}%`}))),
+    cartaoVaga(v, el("div", {}, acoes, rodape)));
+}
+
+function telaFesta(vistasHoje){
+  const msgs = CFG.comemoracao || ["Caixinha zerada! 💖"];
+  const titulo = vistasHoje ? sorteia(msgs, new Date().getDate()) : "Tudo em dia por aqui 💖";
+  const sub = vistasHoje
+    ? `Você viu ${vistasHoje} ${vistasHoje === 1 ? "vaga" : "vagas"} hoje.`
+    : "Nenhuma vaguinha nova com as suas palavras agora. O robozinho procura de novo a cada 2 horas 💤";
+  const fogo = EST.fogo.dias > 0 && EST.fogo.ultimo === hoje() ? el("div", {class: "fogo"}, `🔥 ${EST.fogo.dias} ${EST.fogo.dias === 1 ? "dia zerando" : "dias seguidos zerando"}`) : null;
+  $("#tela").replaceChildren(el("section", {class: "cartao festa entra"},
+    el("img", {src: "img/mica-comemora.webp", alt: "Desenho da Mica feliz com o cachorrinho"}),
+    el("h2", {}, titulo), el("p", {}, sub), fogo,
+    el("div", {class: "botoes"},
+      porAcao("quero").length ? el("button", {class: "botao forte", onclick: () => irPara("lista")}, `📝 Minha lista (${porAcao("quero").length})`) : null,
+      el("button", {class: "botao", onclick: () => irPara("buscar")}, "🔎 Buscar mais"),
+      desfazer.length ? el("button", {class: "botao", onclick: voltar}, "↩ desfazer") : null)));
+}
+
+function itemLista(v, botoes, extra){
+  const url = urlSegura(v.url);
+  return el("div", {class: "item entra"},
+    el("h3", {}, v.titulo),
+    el("div", {class: "meta"}, v.empresa ? el("span", {}, "🏢 " + v.empresa) : null, el("span", {}, "🌎 " + (v.local || "Remoto")), v.valor ? el("span", {}, "💰 " + v.valor) : null, el("span", {}, quando(v.publicada || v.descoberta))),
+    extra || null,
+    el("div", {class: "linha"}, url ? el("a", {class: "mini-abrir", href: url, target: "_blank", rel: "noopener noreferrer"}, "Abrir ↗") : null, ...botoes));
+}
+
+// ---------------------------------------------------------------- "Pro Jonas": compartilhar ou copiar a vaga
+function paraQuem(){ return CFG.para_quem || "Jonas"; }
+function enviadaPraEle(){ return el("span", {class: "feito"}, `💌 enviada pro ${paraQuem()}`); }
+function botaoPraEle(v){
+  if (EST.jonas[v.id]) return enviadaPraEle();
+  const b = el("button", {class: "mini-jonas", onclick: async () => { if (await mandarPraEle(v)) { b.replaceWith(enviadaPraEle()); contadores(); } }}, `💌 Pro ${paraQuem()}`);
+  return b;
+}
+// Copia na hora e abre uma janelinha mostrando exatamente o que foi copiado (título + link).
+async function mandarPraEle(v){
+  const nome = paraQuem(), url = urlSegura(v.url) || "";
+  const linha = `${v.titulo}${v.empresa ? " — " + v.empresa : ""}`;
+  const msg = `Vaga pro ${nome} 💌\n${linha}${url ? "\n" + url : ""}`;
+  const copiou = await copiar(msg);
+  const d = $("#dlgJonas"), area = $("#jTexto"), ok = $("#jOk"), share = $("#jCompartilhar"), denovo = $("#jCopiar");
+  $("#jTitulo").textContent = copiou ? `✅ Copiado! Agora é só colar no Discord pro ${nome} 💌` : `Copie o texto abaixo e cole no Discord pro ${nome} 💌`;
+  $("#jCab").textContent = `Vaga pro ${nome} 💌`;
+  $("#jVaga").textContent = linha;
+  const a = $("#jLink"); a.textContent = url || "(essa vaga não tem link)";
+  if (url) a.href = url; else a.removeAttribute("href");
+  area.value = msg; area.hidden = copiou; $("#jDica").hidden = copiou;  // se não copiou sozinho, mostra o texto para copiar na mão
+  denovo.hidden = !copiou; denovo.textContent = "📋 Copiar de novo";
+  ok.textContent = copiou ? "Fechar" : "Pronto, copiei"; ok.value = copiou ? "ok" : "copiei";
+  share.hidden = !navigator.share;  // celular: Discord, WhatsApp…
+  let compartilhou = false;
+  share.onclick = async () => { try { await navigator.share({title: `Vaga pro ${nome}`, text: `Vaga pro ${nome} 💌\n${linha}`, url}); compartilhou = true; d.close("ok"); } catch {} };
+  denovo.onclick = async () => { if (await copiar(msg)) { denovo.textContent = "✓ Copiado!"; setTimeout(() => denovo.textContent = "📋 Copiar de novo", 1500); } };
+  d.showModal();
+  if (!copiou) { area.focus(); area.select(); }
+  const enviada = await new Promise(r => d.addEventListener("close", () => r(copiou || compartilhou || d.returnValue === "copiei"), {once: true}));
+  if (enviada) { EST.jonas[v.id] = new Date().toISOString(); salvar(); }
+  return enviada;
+}
+async function copiar(t){
+  try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(t); return true; } } catch {}
+  try {
+    const ta = el("textarea", {style: "position:fixed;opacity:0"});
+    ta.value = t; document.body.append(ta); ta.select();
+    const ok = document.execCommand("copy"); ta.remove();
+    return ok;
+  } catch { return false; }
+}
+function aviso(msg, desfazerFn){  // recadinho no pé da tela; com desfazerFn ganha o botão "desfazer"
+  const t = $("#aviso");
+  t.replaceChildren(msg);
+  if (desfazerFn) t.append(el("button", {class: "aviso-desfazer", onclick: () => { desfazerFn(); t.classList.remove("on"); }}, "desfazer"));
+  t.classList.toggle("clicavel", !!desfazerFn);
+  t.classList.add("on");
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("on"), desfazerFn ? 5000 : 2800);
+}
+
+// ---------------------------------------------------------------- tirar da lista / do "Mandei pro Jonas"
+function tirarDaLista(v){
+  const antes = EST.vistas[v.id] ? {...EST.vistas[v.id]} : null;
+  EST.vistas[v.id] = {acao: "nao", em: new Date().toISOString()};  // não volta para a caixinha
+  salvar(); render();
+  aviso("Tirada da sua lista", () => { if (antes) EST.vistas[v.id] = antes; else delete EST.vistas[v.id]; salvar(); render(); });
+}
+function tirarDoJonas(v){
+  const antes = EST.jonas[v.id];
+  delete EST.jonas[v.id];
+  salvar(); render();
+  aviso(`Tirada do “Mandei pro ${paraQuem()}”`, () => { EST.jonas[v.id] = antes; salvar(); render(); });
+}
+
+// ---------------------------------------------------------------- trecho do texto com a palavra destacada
+function mapear(texto, tirarHifen){  // texto normalizado + de onde veio cada letra no original
+  let s = ""; const idx = [];
+  for (let i = 0; i < texto.length; i++) {
+    let c = texto[i].toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    if (c === "-") { if (tirarHifen) continue; c = " "; }
+    if (c === "/") c = " ";
+    for (const ch of c) { s += ch; idx.push(i); }
+  }
+  return {s, idx};
+}
+function trecho(v, termos){
+  const texto = v.texto || "";
+  for (const termo of termos) {
+    const tv = variantes(limparTermo(termo));
+    for (const [k, tirar] of [[1, false], [0, true]]) {
+      if (!tv[k]) continue;
+      const {s, idx} = mapear(texto, tirar);
+      const m = new RegExp("(^|[^a-z0-9])(" + padrao(tv[k], true) + ")($|[^a-z0-9])").exec(s);
+      if (!m) continue;
+      const ini = idx[m.index + m[1].length], fim = idx[m.index + m[1].length + m[2].length - 1] + 1;
+      let a = Math.max(0, ini - 70), b = Math.min(texto.length, fim + 90);
+      if (a > 0) { const sp = texto.indexOf(" ", a); if (sp > -1 && sp < ini) a = sp + 1; }
+      if (b < texto.length) { const sp = texto.lastIndexOf(" ", b); if (sp > fim) b = sp; }
+      const limpa = x => x.replace(/\s+/g, " ");
+      return el("p", {class: "trecho"}, a > 0 ? "…" : "", limpa(texto.slice(a, ini)), el("mark", {}, texto.slice(ini, fim)), limpa(texto.slice(fim, b)), b < texto.length ? "…" : "");
+    }
+  }
+  return null;
+}
+
+function telaLista(){
+  const quero = porAcao("quero"), feitas = porAcao("apliquei").sort((a, b) => (EST.vistas[b.id].em || "").localeCompare(EST.vistas[a.id].em || ""));
+  const total = quero.length + feitas.filter(v => EST.vistas[v.id].daLista).length;
+  const pct = total ? Math.round((total - quero.length) / total * 100) : 100;
+  const t = $("#tela"); t.replaceChildren();
+  if (quero.length) {
+    t.append(el("div", {class: "progresso"},
+      el("div", {class: "rotulo"}, el("span", {}, `Faltam ${quero.length} pra mandar 💌`), el("span", {}, pct + "%")),
+      el("div", {class: "barra"}, el("i", {style: `width:${pct}%`}))));
+    for (const v of quero) t.append(itemLista(v, [
+      el("button", {class: "mini-ok", onclick: () => { marcar(v.id, "apliquei"); EST.vistas[v.id].daLista = true; salvar(); if (!porAcao("quero").length) chuvaDeCoracoes(); render(); }}, "✅ Apliquei"),
+      el("button", {class: "mini-tirar", onclick: () => tirarDaLista(v)}, "Tirar")]));
+  } else {
+    t.append(el("div", {class: "cartao vazio entra"}, feitas.length ? "Listinha zerada! Você mandou tudo ✨" : "Quando você tocar em “💌 Quero aplicar”, a vaga fica guardada aqui."));
+  }
+  if (feitas.length) {
+    t.append(el("p", {class: "titulo-secao"}, `✅ Já apliquei (${feitas.length})`));
+    for (const v of feitas.slice(0, 30)) t.append(itemLista(v, [
+      el("span", {class: "feito"}, "enviada " + quando(EST.vistas[v.id].em)),
+      el("button", {class: "mini-tirar", onclick: () => tirarDaLista(v)}, "Tirar")]));
+  }
+  const praEle = DADOS.vagas.filter(v => EST.jonas[v.id]).sort((a, b) => EST.jonas[b.id].localeCompare(EST.jonas[a.id]));
+  if (praEle.length) {
+    const det = el("details", {class: "mais-texto", open: jonasAberto ? "" : null, ontoggle: e => { jonasAberto = e.target.open; }},
+      el("summary", {}, `💌 Mandei pro ${paraQuem()} (${praEle.length})`));
+    for (const v of praEle.slice(0, 30)) det.append(itemLista(v, [
+      el("span", {class: "feito"}, "enviada " + quando(EST.jonas[v.id])),
+      el("button", {class: "mini-tirar", onclick: () => tirarDoJonas(v)}, "Tirar")]));
+    t.append(det);
+  }
+}
+
+let termoBusca = "";
+function telaBuscar(){
+  const t = $("#tela"); t.replaceChildren();
+  const input = el("input", {type: "search", placeholder: "python, dados, fastapi…", value: termoBusca, "aria-label": "Palavras para buscar"});
+  const resultados = el("div", {});
+  const executar = () => {
+    termoBusca = input.value;
+    const ts = separar(termoBusca), sem = semPalavras();
+    resultados.replaceChildren();
+    if (!ts.length) { resultados.append(el("p", {class: "vazio"}, "Escreva uma ou mais palavras, separadas por vírgula 💗")); return; }
+    const exato = [], comeco = [], texto = [];
+    for (const v of DADOS.vagas) {
+      if (sem.some(x => tem(x, vt(v)))) continue;
+      if (ts.some(x => tem(x, vt(v)))) exato.push(v);                 // palavra inteira no título
+      else if (ts.some(x => tem(x, vt(v), true))) comeco.push(v);     // só o começo da última palavra
+      else if (ts.some(x => tem(x, vx(v), true))) texto.push(v);
+    }
+    const titulo = exato.concat(comeco);
+    const item = (v, comTrecho) => {
+      const st = EST.vistas[v.id]?.acao;
+      const minha = st === "apliquei" ? el("span", {class: "feito"}, "✅ já aplicou")
+        : st === "quero" ? el("span", {class: "feito"}, "📝 está na sua lista")
+        : el("button", {class: "mini-salvar", title: "Guarda na sua lista para aplicar", onclick: e => { marcar(v.id, "quero"); e.target.replaceWith(el("span", {class: "feito"}, "📝 guardada na sua lista")); contadores(); }}, "📝 Guardar pra mim");
+      return itemLista(v, [minha, botaoPraEle(v)], comTrecho ? trecho(v, ts) : null);
+    };
+    resultados.append(el("p", {class: "titulo-secao"}, titulo.length
+      ? `${titulo.length} ${titulo.length === 1 ? "vaga remota" : "vagas remotas"} com isso no título`
+      : "Nenhuma vaga com isso no título por enquanto 🌷"));
+    for (const v of titulo.slice(0, 60)) resultados.append(item(v, false));
+    if (texto.length) {
+      const det = el("details", {class: "mais-texto", open: titulo.length ? null : ""},
+        el("summary", {}, `Aparece no texto de ${texto.length} ${texto.length === 1 ? "vaga" : "vagas"} (confira o trecho)`));
+      for (const v of texto.slice(0, 40)) det.append(item(v, true));
+      resultados.append(det);
+    }
+  };
+  input.addEventListener("input", () => { clearTimeout(input._t); input._t = setTimeout(executar, 200); });
+  const sugest = el("div", {class: "sugestoes"}, ...palavras().slice(0, 10).map(p => el("button", {onclick: () => { input.value = p; executar(); }}, p)));
+  t.append(el("div", {class: "campo"}, input), sugest, resultados);
+  executar();
+}
+
+// ---------------------------------------------------------------- ações
+function agir(id, acao){
+  marcar(id, acao);
+  EST.vistas[id].cx = true; salvar();  // conta no 100% da caixinha de hoje
+  abertoTexto = false; atualId = null;
+  if (!caixinha().length) zerou();
+  render();
+  const topo = $("#tela").getBoundingClientRect().top;
+  if (topo < 0) window.scrollBy({top: topo - 10, behavior: "smooth"});  // próxima vaga começa do título
+}
+function voltar(){
+  const u = desfazer.pop(); if (!u) return;
+  if (u.antes) EST.vistas[u.id] = u.antes; else delete EST.vistas[u.id];
+  salvar(); render();
+}
+function zerou(){
+  const d = hoje(), ontem = hoje(new Date(Date.now() - 864e5));
+  if (EST.fogo.ultimo !== d) { EST.fogo.dias = EST.fogo.ultimo === ontem ? EST.fogo.dias + 1 : 1; EST.fogo.ultimo = d; salvar(); }
+  chuvaDeCoracoes();
+}
+function chuvaDeCoracoes(){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const box = $("#coracoes"), simbolos = ["💖", "💗", "💕", "🌸", "✨", "💓"];
+  for (let i = 0; i < 36; i++) {
+    const s = el("span", {}, simbolos[i % simbolos.length]);
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.fontSize = 16 + Math.random() * 18 + "px";
+    s.style.animationDuration = 2.2 + Math.random() * 1.8 + "s";
+    s.style.animationDelay = Math.random() * .6 + "s";
+    box.append(s);
+    setTimeout(() => s.remove(), 5000);
+  }
+}
+function irPara(nova){ aba = nova; render(); window.scrollTo({top: 0, behavior: "smooth"}); }
+
+function contadores(){
+  $("#nCaixa").textContent = caixinha().length || "";
+  $("#nLista").textContent = porAcao("quero").length || "";
+}
+function render(){
+  document.querySelectorAll("#abas button").forEach(b => b.classList.toggle("on", b.dataset.aba === aba));
+  contadores();
+  if (aba === "caixinha") telaCaixinha(); else if (aba === "lista") telaLista(); else telaBuscar();
+}
+$("#abas").addEventListener("click", e => { const b = e.target.closest("button[data-aba]"); if (b) irPara(b.dataset.aba); });
+
+// ---------------------------------------------------------------- ajustes
+const dlg = $("#dlgAjustes");
+$("#btnAjustes").onclick = () => {
+  $("#aPalavras").value = palavras().join(", ");
+  $("#aSem").value = semPalavras().join(", ");
+  $("#aDias").value = String(diasCaixa());
+  dlg.showModal();
+};
+dlg.addEventListener("close", () => {
+  if (dlg.returnValue !== "salvar") return;
+  EST.palavras = $("#aPalavras").value; EST.sem = $("#aSem").value; EST.dias = Number($("#aDias").value);
+  salvar(); render();
+});
+$("#btnRecomecar").onclick = () => {
+  if (!confirm("Apagar seu progresso, sua lista e seus ajustes neste aparelho?")) return;
+  EST = {vistas: {}, fogo: {dias: 0, ultimo: null}, jonas: {}}; desfazer = []; salvar(); dlg.close(); render();
+};
+
+// ---------------------------------------------------------------- início
+(async function iniciar(){
+  try {
+    const [cfg, dados] = await Promise.all([
+      fetch("mica.json", {cache: "no-store"}).then(r => r.json()),
+      fetch("vagas.json", {cache: "no-store"}).then(r => r.json())]);
+    CFG = cfg; DADOS = dados; carregadoEm = Date.now();
+  } catch (e) {
+    $("#tela").replaceChildren(el("div", {class: "cartao vazio"}, "Não consegui carregar as vagas agora. Tenta de novo daqui a pouquinho 💗"));
+    return;
+  }
+  document.title = CFG.titulo || document.title;
+  $("#titulo").textContent = CFG.titulo || "Localizador de Vagas da Mica";
+  $("#assinatura").textContent = (CFG.assinatura || "feito com amor pelo Jonas") + " 💌";
+  const dia = Math.floor(Date.now() / 864e5);
+  $("#bilhete").textContent = "💗 " + sorteia(CFG.bilhetes, dia);
+  atualizarRodape();
+  render();
+})();
+
+function atualizarRodape(){
+  $("#rodape").textContent = `Vagas remotas que aceitam quem está no Brasil · atualizado ${quando(DADOS.atualizado_em)}`;
+}
+
+// ---------------------------------------------------------------- busca vagas novas quando ela volta para a aba
+const RECARREGAR_MIN = 15;
+async function atualizarSePreciso(){
+  if (document.hidden || !carregadoEm || Date.now() - carregadoEm < RECARREGAR_MIN * 6e4) return;
+  carregadoEm = Date.now();
+  try {
+    const novos = await fetch("vagas.json", {cache: "no-store"}).then(r => r.json());
+    if (novos.atualizado_em === DADOS.atualizado_em) { atualizarRodape(); return; }
+    const antes = new Set(caixinha().map(v => v.id));
+    DADOS = novos;
+    const chegaram = caixinha().filter(v => !antes.has(v.id)).length;
+    atualizarRodape();
+    if (!$("#dlgAjustes").open && !(aba === "buscar" && document.activeElement?.type === "search")) render();
+    else contadores();
+    if (chegaram) aviso(`✨ ${chegaram} ${chegaram === 1 ? "vaga nova chegou" : "vagas novas chegaram"} na caixinha`);
+  } catch { /* sem internet agora: tenta de novo na próxima volta */ }
+}
+document.addEventListener("visibilitychange", atualizarSePreciso);
+window.addEventListener("focus", atualizarSePreciso);
+setInterval(atualizarSePreciso, 5 * 6e4);
+</script>
+</body>
+</html>

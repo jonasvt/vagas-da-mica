@@ -1,0 +1,25 @@
+{
+  "titulo": "Localizador de Vagas da Mica",
+  "assinatura": "feito com amor pelo Jonas",
+  "para_quem": "Jonas",
+
+  "palavras": "python, backend, cientista de dados, data scientist, engenheira de dados, engenheiro de dados, data engineer, analista de dados, data analyst, machine learning, fastapi, django",
+  "sem": "senior, sênior, sr, lead, staff, principal, head",
+  "dias_na_caixinha": 7,
+
+  "bilhetes": [
+    "A vaga certa vai ter muita sorte de ter você ✨",
+    "Programadora mais linda do mundo 💻💕",
+    "Uma vaga de cada vez. Eu tô aqui torcendo por você 🫶",
+    "Você é muito mais capaz do que imagina 💖",
+    "Orgulho de você todos os dias 🌷",
+    "Respira, bebe uma água e bora ver as vaguinhas 💧💗",
+    "Cada vaga vista é um passinho. E eu amo te ver andando 🐾"
+  ],
+
+  "comemoracao": [
+    "Caixinha zerada! Você viu todas as vagas, meu amor 💖",
+    "100%! Agora descansa que você mereceu 🌸",
+    "Zeradinha! Tô muito orgulhoso de você 🥰"
+  ]
+}
